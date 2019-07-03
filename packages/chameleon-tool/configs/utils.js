@@ -138,6 +138,9 @@ exports.cssLoaders = function (options) {
 }
 
 exports.getJsLoader = function () {
+  if (cml.config.get().quickRelease === true) {
+    return 'happypack/loader?id=js'
+  }
   return {
     loader: 'babel-loader',
     options: {

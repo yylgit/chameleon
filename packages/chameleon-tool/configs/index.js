@@ -6,7 +6,7 @@ const getWeexBuildConfig = require('./getWeexBuildConfig.js');
 const getMiniAppDevConfig = require('./getMiniAppDevConfig.js');
 const getMiniAppBuildConfig = require('./getMiniAppBuildConfig.js');
 const utils = require('./utils');
-
+const happypackWrap = require('./happypackWrap.js');
 /**
  *
  * @param {*} options
@@ -47,6 +47,10 @@ module.exports = async function (options) {
       break;
     default:
       break;
+  }
+
+  if (cml.config.get().quickRelease === true) {
+    webpackConfig = happypackWrap(webpackConfig);
   }
 
   cml.utils.applyPlugin('webpackConfig', { type, media, webpackConfig }, function(params) {

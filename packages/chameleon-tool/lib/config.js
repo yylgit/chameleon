@@ -60,6 +60,7 @@ var chameleonConfig = {
     enable: false,
     mapremote: []
   },
+  quickRelease: true,
   // entry: {
   //   template: 'entry_test/entry.html',
   //   web: 'entry_test/web.js',

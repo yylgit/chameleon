@@ -3,7 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const {getBabelPath, getExcludeBabelPath, getGlobalCheckWhiteList, getFreePort} = require('./utils');
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const ChameleonWebpackPlugin = require('chameleon-webpack-plugin')
 const WebpackCheckPlugin = require('webpack-check-plugin')
@@ -97,7 +97,6 @@ module.exports = function (options) {
         loader: 'file-loader',
         options: {
           name: getstaticPath('media')
-         
         }
       },
       {
@@ -199,7 +198,7 @@ module.exports = function (options) {
         assetNameRegExp: /\.css$/,
         cssProcessorOptions: { safe: true, discardComments: { removeAll: true }, autoprefixer: false } 
       }),
-      new UglifyJsPlugin({})
+      new ParallelUglifyPlugin({})
     ])
   }
 

@@ -31,6 +31,7 @@ export default new Index();
 </style>
 <script cml-type="json">
 {
+
   "base": {
     "usingComponents": {
       "demo-com": "/components/demo-com/demo-com"
