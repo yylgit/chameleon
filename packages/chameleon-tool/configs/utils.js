@@ -122,6 +122,7 @@ exports.cssLoaders = function (options) {
     }
 
     addMediaLoader(result, options.type);
+    result.unshift('cache-loader');
     return result;
   }
   var result = {
@@ -138,15 +139,19 @@ exports.cssLoaders = function (options) {
 }
 
 exports.getJsLoader = function () {
-  if (cml.config.get().quickRelease === true) {
+  if (cml.config.get().quick && cml.config.get().quick.happypack === true) {
     return 'happypack/loader?id=js'
   }
-  return {
-    loader: 'babel-loader',
-    options: {
-      filename: path.join(cml.root, 'chameleon.js')
+  return [
+    'cache-loader',
+    {
+      loader: 'babel-loader',
+      options: {
+        cacheDirectory: true,
+        filename: path.join(cml.root, 'chameleon.js')
+      }
     }
-  }
+  ]
 }
 
 // Generate loaders for standalone style files (outside of .vue)

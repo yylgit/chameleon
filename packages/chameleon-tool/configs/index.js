@@ -49,7 +49,7 @@ module.exports = async function (options) {
       break;
   }
 
-  if (cml.config.get().quickRelease === true) {
+  if (cml.config.get().quick && cml.config.get().quick.happypack === true) {
     webpackConfig = happypackWrap(webpackConfig);
   }
 

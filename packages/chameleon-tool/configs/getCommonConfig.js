@@ -71,12 +71,14 @@ module.exports = function (options) {
         exclude: getExcludeBabelPath(),
         // 不能babel babel-runtime
         include: getBabelPath(),
-        use: [{
-          loader: 'babel-loader',
-          options: {
-            'filename': path.join(cml.root, 'chameleon.js')
+        use: [
+          'cache-loader',
+          {
+            loader: 'babel-loader',
+            options: {
+              'filename': path.join(cml.root, 'chameleon.js')
+            }
           }
-        }
 
         ]
       },
@@ -112,21 +114,23 @@ module.exports = function (options) {
         // exclude: /(node_modules|bower_components)/,
         // 不能babel babel-runtime
         include: getBabelPath(),
-        use: [{
-          loader: 'babel-loader',
-          options: {
-            'filename': path.join(cml.root, 'chameleon.js')
-          }
-        },
+        use: [
+          'cache-loader',
+          {
+            loader: 'babel-loader',
+            options: {
+              'filename': path.join(cml.root, 'chameleon.js')
+            }
+          },
 
-        {
-          loader: 'interface-loader',
-          options: {
-            cmlType: type,
-            media,
-            check: cml.config.get().check
+          {
+            loader: 'interface-loader',
+            options: {
+              cmlType: type,
+              media,
+              check: cml.config.get().check
+            }
           }
-        }
         ]
       }
       ]
