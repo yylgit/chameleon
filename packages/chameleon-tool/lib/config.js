@@ -61,7 +61,6 @@ var chameleonConfig = {
     mapremote: []
   },
   quick: {
-    happypack: false,
     cache: true
   },
   // entry: {

@@ -6,7 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 let webpostcssLoader = 'postcss-loader';
 const portfinder = require('portfinder');
 const analyzeTemplate = require('chameleon-template-parse').analyzeTemplate;
-
+const os = require('os');
+const findCacheDir = require('find-cache-dir');
 exports.getPostcssrcPath = function (type) {
   return path.join(__dirname, `./postcss/${type}/.postcssrc.js`);
 }
@@ -110,19 +111,22 @@ exports.cssLoaders = function (options) {
 
     if (options.type === 'weex') {
       result = loaders;
+      result = exports.getCacheLoader(options.type, result);
     } else {
       if (options.extract) {
+        loaders = exports.getCacheLoader(options.type, loaders);
         result = ExtractTextPlugin.extract({
           use: loaders,
           fallback: 'vue-style-loader'
         })
+
       } else {
-        result = ['vue-style-loader'].concat(loaders)
+        result = ['vue-style-loader'].concat(loaders);
+        result = exports.getCacheLoader(options.type, result);
       }
     }
 
     addMediaLoader(result, options.type);
-    result.unshift('cache-loader');
     return result;
   }
   var result = {
@@ -133,25 +137,39 @@ exports.cssLoaders = function (options) {
     // scss: generateLoaders('sass'),
     stylus: generateLoaders('stylus'),
     styl: generateLoaders('stylus'),
-    js: exports.getJsLoader() // 处理vue-loader weex-vue-loader chameleon-loader中的js
+    js: exports.getJsLoader(options.type) // 处理vue-loader weex-vue-loader chameleon-loader中的js
   }
   return result;
 }
 
-exports.getJsLoader = function () {
-  if (cml.config.get().quick && cml.config.get().quick.happypack === true) {
-    return 'happypack/loader?id=js'
-  }
-  return [
-    'cache-loader',
+exports.getJsLoader = function (cmlType) {
+  return exports.getCacheLoader(cmlType, [
     {
       loader: 'babel-loader',
       options: {
-        cacheDirectory: true,
         filename: path.join(cml.root, 'chameleon.js')
       }
     }
-  ]
+  ])
+}
+
+exports.getCacheLoader = function(cmlType, loaders) {
+  if (cml.config.get().quick && cml.config.get().quick.cache !== true) {
+    return loaders
+  }
+
+  let cacheLoader = {
+    loader: 'cache-loader',
+    options: {
+      cacheDirectory: path.join(cml.projectRoot, 'node_modules/.cmlcache/' + cmlType)
+    }
+  }
+  if (loaders && loaders instanceof Array) {
+    loaders.unshift(cacheLoader);
+    return loaders
+  } else {
+    return cacheLoader
+  }
 }
 
 // Generate loaders for standalone style files (outside of .vue)

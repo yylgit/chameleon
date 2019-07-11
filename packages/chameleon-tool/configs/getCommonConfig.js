@@ -2,7 +2,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const {getBabelPath, getExcludeBabelPath, getGlobalCheckWhiteList, getFreePort} = require('./utils');
+const {getBabelPath, getExcludeBabelPath, getGlobalCheckWhiteList, getFreePort, getCacheLoader} = require('./utils');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const ChameleonWebpackPlugin = require('chameleon-webpack-plugin')
@@ -71,16 +71,14 @@ module.exports = function (options) {
         exclude: getExcludeBabelPath(),
         // 不能babel babel-runtime
         include: getBabelPath(),
-        use: [
-          'cache-loader',
+        use: getCacheLoader(type, [
           {
             loader: 'babel-loader',
             options: {
               'filename': path.join(cml.root, 'chameleon.js')
             }
           }
-
-        ]
+        ])
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -114,15 +112,13 @@ module.exports = function (options) {
         // exclude: /(node_modules|bower_components)/,
         // 不能babel babel-runtime
         include: getBabelPath(),
-        use: [
-          'cache-loader',
+        use: getCacheLoader(type, [
           {
             loader: 'babel-loader',
             options: {
               'filename': path.join(cml.root, 'chameleon.js')
             }
           },
-
           {
             loader: 'interface-loader',
             options: {
@@ -131,10 +127,8 @@ module.exports = function (options) {
               check: cml.config.get().check
             }
           }
-        ]
-      }
-      ]
-
+        ])
+      }]
     },
     plugins: [
       new webpack.DefinePlugin({
